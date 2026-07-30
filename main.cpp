@@ -10,10 +10,12 @@ constexpr TGAColor yellow = {0, 200, 255, 255};
 // draw lines/triangle connecting dots
 void line(int aX, int aY, int bX, int bY, TGAImage &buffer, TGAColor color)
 {
-    for (float i = 0; i < 1.0f; i += 0.001f)
+    float steps = std::max(std::abs(bX - aX), std::abs(bY - aY));
+    for (int i = 0; i <= steps; ++i)
     {
-        int x = std::round(aX + (bX - aX) * i);
-        int y = std::round(aY + (bY - aY) * i);
+        float stepProgress = i / steps;
+        int x = std::round(aX + (bX - aX) * t);
+        int y = std::round(aY + (bY - aY) * t);
 
         buffer.set(x, y, color);
     }
