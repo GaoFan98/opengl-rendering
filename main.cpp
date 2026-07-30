@@ -1,4 +1,9 @@
 #include "tgaimage.h"
+#include <algorithm>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+#include <cstdlib>le
 
 // compile time constants - do not depent on runtime input or file I/O, dynamic memory allocation, etc.
 constexpr TGAColor white = {255, 255, 255, 255};
@@ -14,8 +19,8 @@ void line(int aX, int aY, int bX, int bY, TGAImage &buffer, TGAColor color)
     for (int i = 0; i <= steps; ++i)
     {
         float stepProgress = i / steps;
-        int x = std::round(aX + (bX - aX) * t);
-        int y = std::round(aY + (bY - aY) * t);
+        int x = std::round(aX + (bX - aX) * stepProgress);
+        int y = std::round(aY + (bY - aY) * stepProgress);
 
         buffer.set(x, y, color);
     }
@@ -28,17 +33,24 @@ int main(int argc, char **argv)
     constexpr int height = 64;
     TGAImage framebuffer(width, height, TGAImage::RGB);
 
-    int aX = 7, aY = 3;
-    int bX = 12, bY = 34;
-    int cX = 60, cY = 53;
+    // int aX = 7, aY = 3;
+    // int bX = 12, bY = 34;
+    // int cX = 60, cY = 53;
 
-    line(aX, aY, bX, bY, framebuffer, blue);
-    line(bX, bY, cX, cY, framebuffer, green);
-    line(cX, cY, aX, aY, framebuffer, yellow);
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
-    framebuffer.set(aX, aY, white);
-    framebuffer.set(bX, bY, green);
-    framebuffer.set(cX, cY, red);
+    for (int i = 0; i < (1 << 24); i++)
+    {
+        const int ax = std::rand() % width;
+        const int ay = std::rand() % height;
+        const int bx = std::rand() % width;
+        const int by = std::rand() % height;
+        line(ax, ay, bx, by, framebuffer, {static_cast<std::uint8_t>(std::rand() % 256), static_cast<std::uint8_t>(std::rand() % 256), static_cast<std::uint8_t>(std::rand() % 256), static_cast<std::uint8_t>(std::rand() % 256)});
+    }
+
+    // framebuffer.set(aX, aY, white);
+    // framebuffer.set(bX, bY, green);
+    // framebuffer.set(cX, cY, red);
 
     framebuffer.write_tga_file("triangle.tga");
 }
